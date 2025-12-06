@@ -37,13 +37,13 @@
             color: #555;
             font-weight: 600;
         }
-        /* Custom marker styles */
+        /* Custom marker styles - more visible on satellite */
         .custom-marker {
-            width: 32px;
-            height: 32px;
+            width: 36px;
+            height: 36px;
             border-radius: 50% 50% 50% 0;
-            border: 3px solid white;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+            border: 4px solid white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -56,7 +56,7 @@
             background: #4285F4;
             color: white;
             font-weight: bold;
-            font-size: 14px;
+            font-size: 15px;
         }
     </style>
 </head>
@@ -71,12 +71,12 @@
         const subjectLat = parseFloat(params.get('subjectLat'));
         const subjectLng = parseFloat(params.get('subjectLng'));
         
-        // Initialize map with STREETS style (real estate industry standard)
+        // Initialize map with SATELLITE STREETS (satellite imagery + road labels)
         const map = new mapboxgl.Map({
             container: 'map',
-            style: 'mapbox://styles/mapbox/streets-v12',
+            style: 'mapbox://styles/mapbox/satellite-streets-v12',
             center: [subjectLng, subjectLat],
-            zoom: 13
+            zoom: 14
         });
         
         // Add navigation controls
