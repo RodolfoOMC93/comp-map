@@ -1,0 +1,6 @@
+[build]
+  publish = "."
+  command = "sed -i 's/__MAPBOX_TOKEN__/'\"$MAPBOX_TOKEN\"'/g' index.html"
+
+[build.environment]
+  NODE_VERSION = "18"
