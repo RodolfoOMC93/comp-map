@@ -36,26 +36,24 @@
             color: #555;
             font-weight: 600;
         }
-        /* Custom marker styles */
+        /* Google Maps style markers - clean and slim */
         .custom-marker {
-            width: 32px;
-            height: 32px;
-            border-radius: 50% 50% 50% 0;
-            border: 3px solid white;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+            width: 28px;
+            height: 40px;
+            background-size: contain;
+            background-repeat: no-repeat;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            position: relative;
         }
-        .marker-red {
-            background: #EA4335;
-        }
-        .marker-blue {
-            background: #4285F4;
+        .marker-label {
+            position: absolute;
+            top: 8px;
+            left: 50%;
+            transform: translateX(-50%);
             color: white;
             font-weight: bold;
-            font-size: 14px;
+            font-size: 12px;
+            text-align: center;
         }
     </style>
 </head>
@@ -81,13 +79,19 @@
         // Add navigation controls
         map.addControl(new mapboxgl.NavigationControl());
         
+        // Create SVG marker icons (Google Maps style)
+        function createMarkerSVG(color) {
+            return `data:image/svg+xml,%3Csvg width='28' height='40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M14 0C6.268 0 0 6.268 0 14c0 10.5 14 26 14 26s14-15.5 14-26c0-7.732-6.268-14-14-14z' fill='${encodeURIComponent(color)}' stroke='white' stroke-width='2'/%3E%3C/svg%3E`;
+        }
+        
         map.on('load', () => {
             // Add subject property marker (RED)
             const subjectAddress = params.get('subjectAddress') || 'Subject Property';
             const subjectPrice = params.get('subjectPrice') || 'N/A';
             
             const subjectEl = document.createElement('div');
-            subjectEl.className = 'custom-marker marker-red';
+            subjectEl.className = 'custom-marker';
+            subjectEl.style.backgroundImage = `url("${createMarkerSVG('#EA4335')}")`;
             
             new mapboxgl.Marker({element: subjectEl, anchor: 'bottom'})
                 .setLngLat([subjectLng, subjectLat])
@@ -102,7 +106,7 @@
                 .addTo(map)
                 .togglePopup();
             
-            // Add comp markers (BLUE)
+            // Add comp markers (BLUE with numbers)
             const compsData = params.get('comps');
             if (compsData) {
                 try {
@@ -116,8 +120,14 @@
                         if (comp.lat && comp.lng) {
                             // Create numbered blue marker
                             const compEl = document.createElement('div');
-                            compEl.className = 'custom-marker marker-blue';
-                            compEl.textContent = index + 1;
+                            compEl.className = 'custom-marker';
+                            compEl.style.backgroundImage = `url("${createMarkerSVG('#4285F4')}")`;
+                            
+                            // Add number label
+                            const label = document.createElement('div');
+                            label.className = 'marker-label';
+                            label.textContent = index + 1;
+                            compEl.appendChild(label);
                             
                             new mapboxgl.Marker({element: compEl, anchor: 'bottom'})
                                 .setLngLat([comp.lng, comp.lat])
