@@ -37,6 +37,27 @@
             color: #555;
             font-weight: 600;
         }
+        /* Custom marker styles */
+        .custom-marker {
+            width: 30px;
+            height: 30px;
+            border-radius: 50% 50% 50% 0;
+            border: 3px solid white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .marker-red {
+            background: #EA4335;
+        }
+        .marker-blue {
+            background: #4285F4;
+            color: white;
+            font-weight: bold;
+            font-size: 13px;
+        }
     </style>
 </head>
 <body>
@@ -45,21 +66,20 @@
         // Get URL parameters
         const params = new URLSearchParams(window.location.search);
         
-        // **REPLACE WITH YOUR MAPBOX TOKEN**
         mapboxgl.accessToken = '__MAPBOX_TOKEN__';
         
         const subjectLat = parseFloat(params.get('subjectLat'));
         const subjectLng = parseFloat(params.get('subjectLng'));
         
-        // Initialize map
+        // Initialize map with LIGHT style (like Google Maps)
         const map = new mapboxgl.Map({
             container: 'map',
-            style: 'mapbox://styles/mapbox/streets-v12', // Clean, Google-like style
+            style: 'mapbox://styles/mapbox/light-v11', // Light, clean style
             center: [subjectLng, subjectLat],
             zoom: 13
         });
         
-        // Add navigation controls (zoom buttons)
+        // Add navigation controls
         map.addControl(new mapboxgl.NavigationControl());
         
         map.on('load', () => {
@@ -68,15 +88,9 @@
             const subjectPrice = params.get('subjectPrice') || 'N/A';
             
             const subjectEl = document.createElement('div');
-            subjectEl.style.width = '30px';
-            subjectEl.style.height = '30px';
-            subjectEl.style.borderRadius = '50% 50% 50% 0';
-            subjectEl.style.background = '#EA4335';
-            subjectEl.style.transform = 'rotate(-45deg)';
-            subjectEl.style.border = '2px solid white';
-            subjectEl.style.boxShadow = '0 2px 5px rgba(0,0,0,0.3)';
+            subjectEl.className = 'custom-marker marker-red';
             
-            new mapboxgl.Marker({element: subjectEl})
+            new mapboxgl.Marker({element: subjectEl, anchor: 'bottom'})
                 .setLngLat([subjectLng, subjectLat])
                 .setPopup(new mapboxgl.Popup({offset: 25})
                     .setHTML(`
@@ -87,7 +101,7 @@
                         </div>
                     `))
                 .addTo(map)
-                .togglePopup(); // Auto-open
+                .togglePopup();
             
             // Add comp markers (BLUE)
             const compsData = params.get('comps');
@@ -101,24 +115,12 @@
                     
                     comps.forEach((comp, index) => {
                         if (comp.lat && comp.lng) {
-                            // Create custom blue marker
+                            // Create numbered blue marker
                             const compEl = document.createElement('div');
-                            compEl.style.width = '30px';
-                            compEl.style.height = '30px';
-                            compEl.style.borderRadius = '50% 50% 50% 0';
-                            compEl.style.background = '#4285F4';
-                            compEl.style.transform = 'rotate(-45deg)';
-                            compEl.style.border = '2px solid white';
-                            compEl.style.boxShadow = '0 2px 5px rgba(0,0,0,0.3)';
-                            compEl.style.display = 'flex';
-                            compEl.style.alignItems = 'center';
-                            compEl.style.justifyContent = 'center';
-                            compEl.style.color = 'white';
-                            compEl.style.fontWeight = 'bold';
-                            compEl.style.fontSize = '12px';
-                            compEl.innerHTML = `<span style="transform: rotate(45deg)">${index + 1}</span>`;
+                            compEl.className = 'custom-marker marker-blue';
+                            compEl.textContent = index + 1;
                             
-                            new mapboxgl.Marker({element: compEl})
+                            new mapboxgl.Marker({element: compEl, anchor: 'bottom'})
                                 .setLngLat([comp.lng, comp.lat])
                                 .setPopup(new mapboxgl.Popup({offset: 25})
                                     .setHTML(`
